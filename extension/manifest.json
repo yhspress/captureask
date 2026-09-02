@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "CaptureAsk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Capture the current Chrome tab and prepare it for your preferred AI.",
   "action": { "default_title": "CaptureAsk", "default_popup": "popup.html" },
   "background": { "service_worker": "service-worker.js", "type": "module" },
