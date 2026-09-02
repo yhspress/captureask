@@ -4,6 +4,6 @@ document.querySelectorAll("button[data-target]").forEach((button) => button.addE
   status.textContent = "캡처 중…";
   chrome.runtime.sendMessage({ type: mode === "region" ? "select-region" : "capture", target: button.dataset.target }, (response) => {
     if (!response?.ok) { status.textContent = "실패"; return; }
-    status.textContent = response.action === "downloaded" ? "저장됨" : "AI 탭을 열었어요";
+    status.textContent = response.action === "downloaded" ? "저장됨" : response.action === "opened-without-copy" ? "AI 탭을 열었어요 · 직접 붙여넣기" : "AI 탭을 열었어요";
   });
 }));
