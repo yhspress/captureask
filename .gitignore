@@ -1,4 +1,6 @@
 .wrangler/
 *.zip
+!site/downloads/
+!site/downloads/*.zip
 node_modules/
 work/
