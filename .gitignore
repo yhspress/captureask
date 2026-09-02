@@ -1,3 +1,4 @@
 .wrangler/
 *.zip
 node_modules/
+work/
