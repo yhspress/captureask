@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url><loc>https://captureask.pages.dev/</loc><xhtml:link rel="alternate" hreflang="en" href="https://captureask.pages.dev/"/><xhtml:link rel="alternate" hreflang="ko" href="https://captureask.pages.dev/ko/"/><xhtml:link rel="alternate" hreflang="ja" href="https://captureask.pages.dev/ja/"/><xhtml:link rel="alternate" hreflang="zh-TW" href="https://captureask.pages.dev/zh-TW/"/><xhtml:link rel="alternate" hreflang="es" href="https://captureask.pages.dev/es/"/><xhtml:link rel="alternate" hreflang="pt" href="https://captureask.pages.dev/pt/"/><xhtml:link rel="alternate" hreflang="ar" href="https://captureask.pages.dev/ar/"/><xhtml:link rel="alternate" hreflang="fr" href="https://captureask.pages.dev/fr/"/></url>
   <url><loc>https://captureask.pages.dev/guide.html</loc></url>
+  <url><loc>https://captureask.pages.dev/guides/full-screen.html</loc></url>
+  <url><loc>https://captureask.pages.dev/guides/area-capture.html</loc></url>
+  <url><loc>https://captureask.pages.dev/privacy.html</loc></url>
+  <url><loc>https://captureask.pages.dev/terms.html</loc></url>
+  <url><loc>https://captureask.pages.dev/contact.html</loc></url>
   <url><loc>https://captureask.pages.dev/ko/</loc></url><url><loc>https://captureask.pages.dev/ko/guide.html</loc></url>
   <url><loc>https://captureask.pages.dev/ja/</loc></url><url><loc>https://captureask.pages.dev/ja/guide.html</loc></url>
   <url><loc>https://captureask.pages.dev/zh-TW/</loc></url><url><loc>https://captureask.pages.dev/zh-TW/guide.html</loc></url>
