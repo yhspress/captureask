@@ -4,3 +4,4 @@
 !site/downloads/*.zip
 node_modules/
 work/
+.local/
