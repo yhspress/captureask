@@ -2,6 +2,7 @@ const locales = window.CAPTUREASK_I18N;
 const codes = ['en', 'ko', 'ja', 'zh-TW', 'es', 'pt', 'ar', 'fr'];
 const segment = location.pathname.split('/').filter(Boolean)[0];
 const code = locales[segment] ? segment : 'en';
+try { localStorage.setItem('captureask-language', code); } catch { /* Storage can be disabled. */ }
 const t = locales[code];
 const seo = {
   en:['CaptureAsk — Capture Screens. Ask AI.','CaptureAsk is a Chrome extension that captures your screen, tab, or selected area and prepares it for AI questions.'],
@@ -15,14 +16,18 @@ const seo = {
 };
 document.documentElement.lang = code;
 document.documentElement.dir = t.dir;
-document.title = seo[code][0];
+document.title = document.body.dataset.page === 'guide' ? `${t.navGuide} — ${seo[code][0]}` : seo[code][0];
 const description = document.querySelector('meta[name="description"]');
 if (description) description.setAttribute('content', seo[code][1]);
 document.querySelectorAll('[data-t]').forEach(el => { const value = t[el.dataset.t]; if (value) el.innerHTML = value; });
 const language = document.querySelector('#language');
 if (language) {
   language.innerHTML = codes.map(value => `<option value="${value}" ${value === code ? 'selected' : ''}>${locales[value].name}</option>`).join('');
-  language.onchange = () => { const page = document.body.dataset.page === 'guide' ? 'guide' : ''; location.href = language.value === 'en' ? `/${page}` : `/${language.value}/${page}`; };
+  language.onchange = () => {
+    const page = document.body.dataset.page === 'guide' ? 'guide' : '';
+    const prefix = language.value === 'en' ? '/' : `/${language.value}/`;
+    location.href = `${prefix}${page}${location.search}${location.hash}`;
+  };
 }
 const steps = document.querySelector('#steps');
 if (steps) steps.innerHTML = t.steps.map(item => `<li><b>${item[0]}</b><h3>${item[1]}</h3><p>${item[2]}</p></li>`).join('');
@@ -31,8 +36,12 @@ if (installList) installList.innerHTML = t.installSteps.map(item => `<li>${item}
 const startList = document.querySelector('#startList');
 if (startList) startList.innerHTML = t.startList.map(item => `<li>${item}</li>`).join('');
 document.querySelectorAll('a[href^="/"]').forEach(link => {
-  if (code === 'en' || link.href.includes('//')) return;
   const href = link.getAttribute('href');
-  if (href === '/') link.href = `/${code}/`;
-  else if (href.startsWith('/guide.html')) link.href = `/${code}/guide${href.slice(11)}`;
+  if (href.startsWith('//')) return;
+  const url = new URL(href, location.origin);
+  const prefix = code === 'en' ? '/' : `/${code}/`;
+  if (url.pathname === '/' || url.pathname === '/index.html') url.pathname = prefix;
+  else if (url.pathname === '/guide.html' || url.pathname === '/guide') url.pathname = `${prefix}guide`;
+  else return;
+  link.setAttribute('href', `${url.pathname}${url.search}${url.hash}`);
 });

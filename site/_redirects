@@ -1,7 +1,1 @@
-/ko/guide /ko/guide.html 200
-/ja/guide /ja/guide.html 200
-/zh-TW/guide /zh-TW/guide.html 200
-/es/guide /es/guide.html 200
-/pt/guide /pt/guide.html 200
-/ar/guide /ar/guide.html 200
-/fr/guide /fr/guide.html 200
+# Pages serves extensionless HTML routes automatically. Do not rewrite them to .html.

@@ -1,0 +1,35 @@
+/* Consistent section rhythm on landing, guide and reference pages. */
+.hero{padding:56px 0 64px;gap:48px}
+.steps,.details{padding:64px 0}
+.steps ol{margin-top:32px}
+.steps h3{margin-top:24px}
+.ai-section{padding:64px 0}
+.details{gap:48px}
+.details .lede{margin-top:18px}
+.install{min-height:0;padding:40px;gap:32px;align-items:center}
+.install>div{flex:1;min-width:0}
+.guide{padding:48px 0 64px;gap:48px}
+.guide article section{margin-top:44px}
+.legal{padding:48px 0 64px}
+.legal h2{margin-top:32px}
+.topbar nav{align-items:center;flex-wrap:wrap}
+.hero>div,.guide article,.detail-grid article{min-width:0}
+.cta-row{flex-wrap:wrap}
+footer div{flex-wrap:wrap}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #5b58cf;outline-offset:4px}
+[dir="rtl"] h1,[dir="rtl"] h2,[dir="rtl"] h3{letter-spacing:normal}
+@media(max-width:760px){
+  .topbar{height:auto;min-height:71px;padding:14px 0;gap:14px;flex-wrap:wrap}
+  .topbar nav{gap:12px}
+  .hero{padding:36px 0 44px;gap:36px}
+  .steps,.details,.ai-section{padding:40px 0}
+  .details{gap:28px}
+  .steps ol{margin-top:24px}
+  .install{padding:32px 24px}
+  .install div+div{margin-top:24px}
+  .guide{padding:32px 0 44px;gap:28px}
+  .guide article section{margin-top:32px}
+  .legal{padding:32px 0 44px}
+  .legal h1{letter-spacing:-1.5px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
