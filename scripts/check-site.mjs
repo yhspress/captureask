@@ -7,7 +7,7 @@ const scripts = ['i18n.js','final-copy.js','app.js'].map(file => fs.readFileSync
 const codes = ['en','ko','ja','zh-TW','es','pt','ar','fr'];
 for (const code of codes) for (const page of ['home','guide']) {
   const prefix = code === 'en' ? '/' : `/${code}/`;
-  const links = ['/', '/guide.html#privacy', '/downloads/CaptureAsk-extension-v0.3.6-full-screen.zip', '//example.com/'].map(href => ({href, getAttribute(){return this.href;},setAttribute(key,value){this[key]=value;}}));
+  const links = ['/', '/guide.html#privacy', '/downloads/CaptureAsk-extension-v0.3.7-full-screen.zip', '//example.com/'].map(href => ({href, getAttribute(){return this.href;},setAttribute(key,value){this[key]=value;}}));
   const language = {value:code};
   const location = {pathname:prefix+(page==='guide'?'guide':''),origin:'https://captureask.com',search:'',hash:'#privacy'};
   const document = {documentElement:{},body:{dataset:{page}},querySelector:selector=>selector==='#language'?language:null,querySelectorAll:selector=>selector==='[data-t]'?[]:links};
@@ -16,7 +16,7 @@ for (const code of codes) for (const page of ['home','guide']) {
   assert.equal(document.documentElement.lang,code);
   assert.equal(links[0].href,prefix);
   assert.equal(links[1].href,prefix+'guide#privacy');
-  assert.equal(links[2].href,'/downloads/CaptureAsk-extension-v0.3.6-full-screen.zip');
+  assert.equal(links[2].href,'/downloads/CaptureAsk-extension-v0.3.7-full-screen.zip');
   assert.equal(links[3].href,'//example.com/');
   for (const target of codes) {
     language.value=target; language.onchange();

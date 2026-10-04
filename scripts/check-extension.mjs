@@ -1,0 +1,54 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+const store={};let onMessage;const calls=[];
+const session={get:async key=>Object.fromEntries((Array.isArray(key)?key:[key]).map(k=>[k,store[k]])),set:async values=>Object.assign(store,values),remove:async keys=>{for(const k of Array.isArray(keys)?keys:[keys])delete store[k];}};
+const chrome={runtime:{getURL:name=>`chrome-extension://test/${name}`,onMessage:{addListener:fn=>{onMessage=fn;}},onInstalled:{addListener(){}},onStartup:{addListener(){}}},storage:{session,local:{set:async values=>calls.push(values),remove:async()=>{}}},tabs:{create:async options=>{calls.push(options);return{id:42};},update:async(id,options)=>{assert.ok(store.pendingCapturePreview);calls.push({id,...options});}}};
+const worker=vm.runInNewContext(fs.readFileSync('extension/background.js','utf8')+'\n({selectTabArea})',{chrome,URL,Date,Set,crypto:{randomUUID}});
+function message(data,sender={url:'chrome-extension://test/popup.html'}){return new Promise(resolve=>{if(!onMessage(data,sender,resolve))resolve(undefined);});}
+const image='data:image/png;base64,aGVsbG8=';
+assert.equal((await message({type:'open-ai',dataUrl:image,mime:'image/png',targetUrl:'https://chatgpt.com/'})).queued,true);
+assert.equal(store.pendingAiImage.tabId,42);assert.equal(store.pendingCapturePreview.dataUrl,image);
+assert.equal(store.pendingAiImage.dataUrl,undefined,'Screenshot must not be duplicated against session quota');
+assert.equal((await message({type:'get-pending-image'},{tab:{id:99},url:'https://chatgpt.com/'})).pendingAiImage,undefined);
+assert.equal((await message({type:'get-pending-image'},{tab:{id:42},url:'https://claude.ai/'})).pendingAiImage,undefined);
+assert.equal((await message({type:'get-pending-image'},{tab:{id:42},url:'https://chatgpt.com/'})).pendingAiImage.dataUrl,image);
+assert.equal(store.pendingAiImage,undefined);assert.ok(store.pendingCapturePreview);
+await message({type:'open-ai',dataUrl:image,mime:'image/png',targetUrl:'https://chatgpt.com/'});
+store.pendingCapturePreview={dataUrl:'data:image/png;base64,bmV3'};
+assert.equal((await message({type:'get-pending-image'},{tab:{id:42},url:'https://chatgpt.com/'})).pendingAiImage,undefined,'A replaced preview must never be delivered under an earlier handoff');
+assert.equal(store.pendingAiImage,undefined);
+await message({type:'open-ai',dataUrl:image,mime:'image/png',targetUrl:'https://chatgpt.com/'});
+const originalSet=session.set;let oldTabRead;
+session.set=async values=>{await originalSet(values);if(values.pendingCapturePreview)oldTabRead=message({type:'get-pending-image'},{tab:{id:42},url:'https://chatgpt.com/'});};
+const nextImage='data:image/png;base64,bmV3';
+await message({type:'open-ai',dataUrl:nextImage,mime:'image/png',targetUrl:'https://claude.ai/new'});
+assert.equal((await oldTabRead).pendingAiImage,undefined,'A previous provider must not receive a new capture during asynchronous handoff');
+assert.equal((await message({type:'get-pending-image'},{tab:{id:42},url:'https://claude.ai/new'})).pendingAiImage.dataUrl,nextImage);
+session.set=originalSet;
+await message({type:'open-ai',dataUrl:image,mime:'image/png',targetUrl:'https://chatgpt.com/'});
+store.pendingAiImage.expiresAt=Date.now()-1;
+assert.equal((await message({type:'get-pending-image'},{tab:{id:42},url:'https://chatgpt.com/'})).pendingAiImage,undefined);
+assert.equal(store.pendingAiImage,undefined);assert.ok(store.pendingCapturePreview);
+assert.equal((await message({type:'open-ai',dataUrl:image,mime:'image/png',targetUrl:'https://example.com/'})).ok,false);
+assert.equal(await message({type:'discard-capture'},{tab:{id:42},url:'https://chatgpt.com/'}),undefined);
+assert.equal((await message({type:'open-ai',dataUrl:'data:image/png;base64,'+'A'.repeat(7000001),mime:'image/png',targetUrl:'https://chatgpt.com/'})).queued,false);
+assert.equal(store.pendingAiImage,undefined);assert.ok(store.pendingCapturePreview);
+await message({type:'discard-capture'});assert.equal(store.pendingCapturePreview,undefined);
+const html=fs.readFileSync('extension/popup.html','utf8');
+for(const id of fs.readFileSync('extension/popup.js','utf8').matchAll(/\$\('([^']+)'\)/g)) assert.ok(html.includes(`id="${id[1]}"`),`Missing popup element ${id[1]}`);
+assert.equal(JSON.parse(fs.readFileSync('extension/manifest.json','utf8')).version,'0.3.7');
+let keyboard;let removed=0;let nodes=[];
+const draw=vm.runInNewContext('('+fs.readFileSync('extension/background.js','utf8').split('function drawSelectionOverlay()')[1].replace(/^/, 'function drawSelectionOverlay()')+')',{
+ document:{createElement(){const el={style:{},listeners:{},append(){},remove(){removed++;},addEventListener(type,fn){this.listeners[type]=fn;}};nodes.push(el);return el;},documentElement:{append(){}}},
+ devicePixelRatio:2,addEventListener(type,fn){keyboard=fn;},removeEventListener(type,fn){if(keyboard===fn)keyboard=undefined;}
+});
+let selection=draw();keyboard({key:'a'});assert.ok(keyboard,'Other keys must not disable Escape');keyboard({key:'Escape'});assert.equal(await selection,null);assert.equal(keyboard,undefined);assert.equal(removed,1);
+nodes=[];selection=draw();nodes[0].listeners.pointerdown({clientX:10,clientY:20});nodes[0].listeners.pointerup({clientX:110,clientY:80});const selected=await selection;assert.equal(selected.width,100);assert.equal(selected.scale,2);assert.equal(keyboard,undefined);
+let noticeShown=false;let tabsCreated=0;
+chrome.tabs.query=async()=>[{id:42,windowId:1}];chrome.tabs.captureVisibleTab=async()=>image;chrome.tabs.create=async()=>{tabsCreated++;return{id:43};};
+chrome.scripting={executeScript:async options=>{if(options.args){noticeShown=true;return[];}return[{result:{x:0,y:0,width:100,height:100,scale:1}}];}};
+chrome.runtime.getContexts=async()=>[{}];chrome.runtime.sendMessage=async()=>({dataUrl:'data:image/png;base64,'+'A'.repeat(9000001)});
+await worker.selectTabArea('https://claude.ai/new');assert.equal(tabsCreated,0);assert.equal(noticeShown,true);assert.match(store.captureStatus,/too large/);
+console.log('PASS: handoff tab/origin isolation, expiry, recovery retention, unsupported targets, oversized-image fallback, sender authorization, discard, popup element integrity and selection cancellation/listener cleanup.');

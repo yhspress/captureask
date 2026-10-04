@@ -1,16 +1,44 @@
 {
   "manifest_version": 3,
   "name": "CaptureAsk",
-  "version": "0.1.5",
-  "description": "Capture the current Chrome tab and prepare it for your preferred AI.",
-  "action": { "default_title": "CaptureAsk", "default_popup": "popup.html" },
-  "background": { "service_worker": "service-worker.js", "type": "module" },
-  "permissions": ["activeTab", "tabs", "storage", "downloads", "offscreen", "scripting"],
-  "host_permissions": ["https://chatgpt.com/*", "https://claude.ai/*", "https://gemini.google.com/*", "https://grok.com/*"],
-  "content_scripts": [{
-    "matches": ["https://chatgpt.com/*", "https://claude.ai/*", "https://gemini.google.com/*", "https://grok.com/*"],
-    "js": ["ai-focus.js"],
-    "run_at": "document_idle"
-  }],
-  "web_accessible_resources": [{ "resources": ["offscreen.html"], "matches": ["<all_urls>"] }]
+  "version": "0.3.7",
+  "description": "Capture a screen, copy it, download it, or ask an AI about it.",
+  "permissions": [
+    "activeTab",
+    "desktopCapture",
+    "downloads",
+    "clipboardWrite",
+    "storage",
+    "tabs",
+    "scripting",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://grok.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://grok.com/*"
+      ],
+      "js": [
+        "ai-attach.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "CaptureAsk",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
 }

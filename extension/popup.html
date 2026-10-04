@@ -1,1 +1,36 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="stylesheet" href="popup.css"><title>CaptureAsk</title></head><body><main><header><span class="mark">⌁</span><b>CaptureAsk</b><small id="status">준비됨</small></header><h1>무엇을 캡처할까요?</h1><div class="mode"><button class="active" data-mode="full">보이는 탭</button><button data-mode="region">영역 선택</button></div><p class="intro" id="mode-note">현재 보이는 Chrome 탭을 캡처합니다.</p><button class="capture" data-target="download"><span>↓</span><div><b>파일로 저장</b><small>다운로드 위치 선택</small></div></button><p class="label">AI에 붙여넣기 준비</p><div class="ai-grid"><button data-target="chatgpt">ChatGPT</button><button data-target="claude">Claude</button><button data-target="gemini">Gemini</button><button data-target="grok">Grok</button></div><p class="note">AI를 선택하면 캡처를 클립보드에 복사한 뒤 해당 사이트를 엽니다. 열린 탭에서 Ctrl + V로 붙여 넣으세요.</p></main><script src="popup.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="popup.css">
+  <title>CaptureAsk</title>
+</head>
+<body>
+  <main>
+    <header><div class="mark">✦</div><div><strong>CaptureAsk</strong><p>Capture context. Ask better.</p></div></header>
+    <section id="capture-panel">
+      <h1>What do you want to capture?</h1>
+      <label class="ai-label" for="quick-ai">After capture, open</label>
+      <select class="quick-ai" id="quick-ai">
+        <option value="https://chatgpt.com/">ChatGPT</option><option value="https://claude.ai/new">Claude</option><option value="https://gemini.google.com/app">Gemini</option><option value="https://grok.com/">Grok</option>
+      </select>
+      <div class="choices">
+        <button id="screen"><span>◫</span>Full screen &amp; send<small>Capture your whole monitor, then open the selected AI</small></button>
+        <button id="tab"><span>▣</span>Current tab<small>Capture the visible page and preview it first</small></button>
+        <button id="tab-area"><span>⌗</span>Drag to capture &amp; send<small>Drag on this page, then open the selected AI</small></button>
+      </div>
+      <p class="notice">For full-screen capture, choose your monitor in Chrome's permission dialog, then click Share.</p>
+    </section>
+    <section id="preview-panel" hidden>
+      <div id="preview-wrap" class="preview-wrap"><img id="preview" alt="Captured screen"><canvas id="crop-canvas" hidden></canvas><div id="selection" hidden></div></div>
+      <div class="crop-actions"><button id="crop">Select area</button><button id="apply-crop" hidden>Use selected area</button></div>
+      <div class="actions"><button id="download">Download PNG</button><button id="copy">Copy image</button></div>
+      <label class="ai-label" for="ai">Ask an AI</label>
+      <div class="ai-row"><select id="ai"><option value="https://chatgpt.com/">ChatGPT</option><option value="https://claude.ai/new">Claude</option><option value="https://gemini.google.com/app">Gemini</option><option value="https://grok.com/">Grok</option></select><button id="send">Attach &amp; open</button></div>
+      <button class="secondary" id="again">Discard &amp; capture again</button>
+    </section>
+  <p id="status" role="status" aria-live="polite"></p><p class="notice">AI attachment is an attempt. Check the image thumbnail before sending. Within storage capacity, the last preview stays in this browser session until discarded or the browser closes. Download before closing if a capacity warning appears.</p></main>
+  <script src="popup.js"></script>
+</body>
+</html>
