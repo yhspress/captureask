@@ -24,6 +24,12 @@ English is the primary language. Fully translated routes are `/ko/`, `/ja/`, `/z
 4. Verify the deployed home page, guide page, all language paths, and that no time gate or ad reward wording exists.
 5. Add AdSense only after site approval; use the account-provided code unchanged.
 
+## Current candidate and verification
+
+The isolated v0.3.7 candidate aligns `extension/` with the formerly ZIP-only v0.3.6 implementation. It repairs popup initialization and crop controls, exposes status outside hidden panels, distinguishes attempted file assignment from confirmed upload, retains a session preview for manual download, scopes the handoff to the opened AI tab, and clears legacy disk-backed screenshots. No new permissions were added relative to the shipped v0.3.6 ZIP. This candidate is not deployed.
+
+Verify the static pages with `node scripts/check-site.mjs`, the handoff contract with `node scripts/check-extension.mjs`, and the local Chromium fixtures with `node scripts/check-browser.mjs`. The browser fixtures test file assignment and recovery without AI accounts; live provider upload acceptance and Chrome's operating-system picker require separate interactive checks.
+
 ## Current limitations
 
-Browser extensions cannot silently capture the entire operating system or automatically upload into third-party AI text fields. CaptureAsk therefore captures the visible tab or user-selected area and uses the clipboard for AI handoff.
+Chrome requires explicit screen-sharing confirmation for monitor capture. Provider file controls may accept an assigned image, but the extension cannot guarantee upload acceptance. The user must check the image thumbnail, and can download the retained preview for manual upload.
