@@ -11,3 +11,11 @@ Added localized capture/attachment/prompt guidance to all eight home and setup r
 Build: `node scripts/refresh-pages.mjs` followed by `node scripts/build-editorial.mjs`. Check: `node scripts/check-site.mjs` plus public page/asset validation after deployment.
 
 After checking the live revision, request another review in AdSense. Approval is Google's decision; this content revision does not itself submit or guarantee approval.
+
+## Rejection follow-up — 2026-11-16
+
+AdSense still reports low-value content. Public ads.txt returns HTTP200 with the correct publisher while the dashboard says not found; these are separate states and neither establishes content approval.
+
+Prepared a screenshot-evidence worksheet with explicit arithmetic, missing-data boundaries and a reusable review record. Removed the repeated worked example from the area-capture article and linked the worksheet instead. Used semantic HTML table text (16px at390px viewport) rather than a downscaled SVG. Preserved all download assets and paused advertising. Existing16 language/page behavior cases,128 language switches and452 local links/assets pass.
+
+This is a verified content and usability improvement, not evidence that Google will approve the site. Recheck deployed content, download hash, mobile layout, legal/contact routes, robots/sitemap and the actual AdSense state before reporting review readiness.
